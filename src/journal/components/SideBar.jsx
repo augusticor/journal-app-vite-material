@@ -27,7 +27,7 @@ export const SideBar = ({ drawerWidth = 240 }) => {
                 <ListItemIcon>
                   <TurnedInNotOutlined />
                 </ListItemIcon>
-                <Grid container>
+                <Grid container direction='column'>
                   <ListItemText primary={fecha} />
                   <ListItemText secondary={'Lorem ipsum bbadad vbla'} />
                 </Grid>
