@@ -33,22 +33,32 @@ const LoginPage = () => {
   return (
     <AuthLayout title='Login'>
       <form onSubmit={onSubmit}>
-        <Grid container spacing={1} justifyContent='space-evenly'>
-          <Grid item xs={12} md={5} sx={{ mt: 2 }}>
+        <Grid container justifyContent='center'>
+          <Grid item xs={8} sx={{ mt: 2 }}>
             <TextField
               label='Email'
               type='email'
               placeholder='email@gmail.com'
               fullWidth
-              variant='outlined'
+              variant='standard'
               name='email'
               value={email}
               onChange={onInputChange}
+              required
             />
           </Grid>
 
-          <Grid item sx={{ mt: 2 }}>
-            <TextField label='Password' type='password' fullWidth variant='standard' name='password' value={password} onChange={onInputChange} />
+          <Grid item xs={8} sx={{ mt: 2 }}>
+            <TextField
+              label='Password'
+              type='password'
+              fullWidth
+              variant='standard'
+              name='password'
+              value={password}
+              onChange={onInputChange}
+              required
+            />
           </Grid>
 
           <Grid container spacing={2} sx={{ mb: 2, mt: 3 }}>
