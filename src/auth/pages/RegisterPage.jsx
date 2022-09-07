@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
+import { startRegisterUserWithEmailAndPassword } from '../../store/auth/thunks';
 
-import { Button, Grid, IconButton, InputAdornment, Link, TextField } from '@mui/material';
+import { Alert, Button, Grid, IconButton, InputAdornment, Link, TextField } from '@mui/material';
 import { VisibilityOff, Visibility } from '@mui/icons-material';
 import AuthLayout from '../layout/AuthLayout';
 
@@ -23,6 +25,9 @@ const formValidations = {
 };
 
 export const RegisterPage = () => {
+  const { status, errorMessage } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
   const [showPassword, setShowPassword] = useState(false);
   const [isFormSubmitted, setisFormSubmitted] = useState(false);
 
@@ -31,20 +36,20 @@ export const RegisterPage = () => {
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const isAuthenticating = useMemo(() => status === 'checking', [status]);
 
   const onSubmit = (event) => {
     event.preventDefault();
     setisFormSubmitted(true);
 
-    if (isFormValid) {
-      console.log(formState);
-      setIsAuthenticating(true);
-    }
+    if (!isFormValid) return;
+
+    dispatch(startRegisterUserWithEmailAndPassword(formState));
+    // console.log(formState);
   };
 
   useEffect(() => {
-    console.log(password);
+    // console.log(password);
     passwordAux = password;
   }, [password]);
 
@@ -130,14 +135,18 @@ export const RegisterPage = () => {
             </Grid>
           </Grid>
 
-          <Grid container sx={{ mb: 2, mt: 5 }} direction='column'>
-            <Grid item>
+          <Grid container sx={{ mb: 2, mt: 3 }} direction='column'>
+            <Grid item display={!!errorMessage ? '' : 'none'}>
+              <Alert severity='error'>{errorMessage}</Alert>
+            </Grid>
+
+            <Grid item sx={{ mt: 2 }}>
               <Button type='submit' variant='outlined' fullWidth disabled={isAuthenticating}>
                 Create Account
               </Button>
             </Grid>
 
-            <Grid item sx={{ mt: 5 }} alignSelf='center'>
+            <Grid item sx={{ mt: 6 }} alignSelf='center'>
               <Link component={RouterLink} color='inherit' to='/auth/login'>
                 Already have an account ? Sign In
               </Link>
