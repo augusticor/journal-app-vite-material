@@ -1,12 +1,5 @@
-import { loginWithEmailAndPassword, registerUserWithEmailAndPassword, signInWithGoogle } from '../../firebase/provides';
+import { firebaseSignOut, loginWithEmailAndPassword, registerUserWithEmailAndPassword, signInWithGoogle } from '../../firebase/provides';
 import { checkingCredentials, login, logout } from './authSlice';
-
-export const checkingAuthentication = (email, password) => {
-  return async (dispatch) => {
-    console.log('Accion asincrona');
-    dispatch(checkingCredentials());
-  };
-};
 
 export const startGoogleSignIn = () => {
   return async (dispatch) => {
@@ -46,5 +39,13 @@ export const startLoginWithEmailAndPassword = ({ email, password }) => {
 
     delete result.ok;
     dispatch(login(result));
+  };
+};
+
+export const startLogout = () => {
+  return async (dispatch) => {
+    await firebaseSignOut();
+
+    dispatch(logout());
   };
 };
