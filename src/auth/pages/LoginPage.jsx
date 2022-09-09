@@ -71,7 +71,7 @@ const LoginPage = () => {
           </Grid>
 
           <Grid container spacing={3} sx={{ mb: 3, mt: 4 }} alignItems='center'>
-            <Grid item xs={12} display={!!errorMessage ? '' : 'none'}>
+            <Grid item xs={12} display={!!errorMessage ? '' : 'none'} className='animate__animated animate__flash'>
               <Alert severity='error'>{errorMessage}</Alert>
             </Grid>
 

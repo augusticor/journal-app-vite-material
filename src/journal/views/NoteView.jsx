@@ -17,7 +17,7 @@ export const NoteView = () => {
         </Button>
       </Grid>
 
-      <Grid container>
+      <Grid container sx={{mb: 3}}>
         <TextField type='text' variant='standard' label='Note title' placeholder='My personal note' fullWidth sx={{ mt: 6 }}></TextField>
 
         <TextField type='text' multiline placeholder='Content of the note' fullWidth sx={{ mt: 4 }} minRows={7}></TextField>

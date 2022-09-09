@@ -136,7 +136,7 @@ export const RegisterPage = () => {
           </Grid>
 
           <Grid container sx={{ mb: 2, mt: 3 }} direction='column'>
-            <Grid item display={!!errorMessage ? '' : 'none'} className='animate__animated animate__heartBeat'>
+            <Grid item display={!!errorMessage ? '' : 'none'} className='animate__animated animate__flash'>
               <Alert severity='error'>{errorMessage}</Alert>
             </Grid>
 

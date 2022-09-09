@@ -8,7 +8,7 @@ const JournalPage = () => {
     <JournalLayout>
       <NoteView />
 
-      <NothingSelectedView />
+      {/* <NothingSelectedView /> */}
 
       <IconButton
         size='large'
