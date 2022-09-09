@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  status: 'checking', // checking, not-authenticated, authenticated
+  status: 'checking', // checking, not-authenticated, authenticated - checking by default for routes protection
   uid: null,
   email: null,
   displayName: null,
