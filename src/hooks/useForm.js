@@ -8,6 +8,11 @@ export const useForm = (initialForm = {}, formValidations = {}) => {
     createValidators();
   }, [formState]);
 
+  // When the initial form changes, the component is re-rendered
+  useEffect(() => {
+    setFormState(initialForm);
+  }, [initialForm]);
+
   const isFormValid = useMemo(() => {
     for (const formValue of Object.keys(formValidation)) {
       if (formValidation[formValue] !== null) return false;

@@ -1,4 +1,4 @@
-import { firebaseAuth } from './config';
+import { firebaseAuth, firestoreDB } from './config';
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
@@ -7,6 +7,10 @@ import {
   signOut,
   updateProfile,
 } from 'firebase/auth';
+import { collection, doc, getDocs, setDoc } from 'firebase/firestore/lite';
+
+// -----------------------------------------------------------------
+// Auth
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -93,5 +97,41 @@ export const firebaseSignOut = async () => {
   } catch (error) {
     console.log(error);
     return { ok: false, error };
+  }
+};
+
+// -----------------------------------------------------------------
+// Journal and notes
+
+export const setNewNote = async (newNote, path) => {
+  try {
+    const newNoteReference = doc(collection(firestoreDB, path));
+    await setDoc(newNoteReference, newNote);
+
+    return newNoteReference.id;
+    //
+  } catch (error) {
+    console.log(error);
+    // return { ok: false, error };
+  }
+};
+
+export const getAllUserNotes = async (path) => {
+  try {
+    const querySnapshot = await getDocs(collection(firestoreDB, path));
+    const notes = [];
+
+    querySnapshot.forEach((firebaseNote) => {
+      notes.push({
+        id: firebaseNote.id,
+        ...firebaseNote.data(),
+      });
+    });
+
+    return notes;
+
+    // console.log(notes);
+  } catch (error) {
+    console.log(error);
   }
 };
