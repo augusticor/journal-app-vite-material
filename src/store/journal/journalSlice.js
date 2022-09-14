@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   isSaving: false, // boolean flag for knowing if the user is saving or not (block buttons or other)
-  messageSaved: '',
+  finishedMessage: '', // message of error or success to show using sweetalert2
   notes: [],
   activeNote: null,
   // Active note example:
@@ -27,24 +27,41 @@ export const journalSlice = createSlice({
 
     setActiveNote: (state, { payload }) => {
       state.activeNote = { ...payload };
+      state.finishedMessage = '';
     },
 
     setNotes: (state, { payload }) => {
       state.notes = payload.notes;
     },
 
-    updateNote: (state, action) => {},
+    updateNote: (state, action) => {
+      state.isSaving = false;
+      state.notes = state.notes.map((note) => (note.id === action.payload.id ? action.payload : note));
+
+      // Same as :
+      // state.notes = state.notes.map((note) => {
+      //   if (note.id === action.payload.id) {
+      //     return action.payload;
+      //   }
+      //   return note;
+      // });
+
+      state.finishedMessage = 'Note sucesfully saved';
+    },
 
     deleteNoteByID: (state, { payload }) => {
       // Delete note from array
     },
 
+    // This action is called when app is creating a new note on firebase
     savingNewNote: (state) => {
       state.isSaving = true;
     },
 
-    setSaving: (state, { payload }) => {
+    // This action is called when a note is being updating on firebase
+    setSaving: (state) => {
       state.isSaving = true;
+      state.finishedMessage = '';
     },
   },
 });

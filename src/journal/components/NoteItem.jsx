@@ -6,8 +6,6 @@ import { TurnedInNotOutlined } from '@mui/icons-material';
 import { Grid, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 
 export const NoteItem = ({ title = '', body, ...rest }) => {
-  console.log('me reenderize ' + title);
-
   const dispatch = useDispatch();
 
   const onNoteClick = () => {
