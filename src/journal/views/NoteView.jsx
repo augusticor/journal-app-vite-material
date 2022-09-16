@@ -1,17 +1,15 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useForm } from '../../hooks/useForm';
 import { useDispatch, useSelector } from 'react-redux';
-import { setActiveNote, startSavingNote } from '../../store/journal';
+import { setActiveNote, startDeletingNote, startSavingNote, startUploadingImagesToCloudinary } from '../../store/journal';
 
-import Swal from 'sweetalert2';
-import 'sweetalert2/dist/sweetalert2.css';
-import { SaveOutlined } from '@mui/icons-material';
-import { Button, Grid, TextField, Typography } from '@mui/material';
+import { SaveOutlined, AddPhotoAlternateRounded, DeleteForeverTwoTone } from '@mui/icons-material';
+import { Button, Grid, IconButton, TextField, Typography } from '@mui/material';
 import { ImageGallery } from '../components';
 
 export const NoteView = () => {
   const dispatch = useDispatch();
-  const { activeNote, finishedMessage, isSaving } = useSelector((state) => state.journal);
+  const { activeNote, isSaving } = useSelector((state) => state.journal);
 
   // Se toma la nota activa como el estado inicial del formulario useForm
   const { title, body, date, onInputChange, formState } = useForm(activeNote);
@@ -22,16 +20,16 @@ export const NoteView = () => {
     return reFormattedDate.toUTCString();
   }, [date]);
 
-  // Use effect to watch for new message (error or success)
-  useEffect(() => {
-    if (finishedMessage.length > 0) {
-      Swal.fire({
-        text: finishedMessage,
-        icon: 'success',
-        timer: 2000,
-      });
-    }
-  }, [finishedMessage]);
+  const onFileInputChange = (event) => {
+    const { files } = event.target;
+
+    if (files.length === 0) return;
+
+    // dispatch(setActiveNote) for avoid the form to clear and loose what the user has written
+    dispatch(setActiveNote(formState));
+
+    dispatch(startUploadingImagesToCloudinary(files));
+  };
 
   const onClickSaveNote = () => {
     // Update de redux activeNote when the user clicks on save note
@@ -40,18 +38,35 @@ export const NoteView = () => {
     dispatch(startSavingNote());
   };
 
+  const onClickDeleteNote = () => {
+    dispatch(startDeletingNote());
+  };
+
   return (
     <Grid container justifyContent='space-between' alignItems='center' sx={{ mb: 1 }} className='animate__animated animate__zoomIn'>
-      <Grid item>
+      <Grid item justifySelf='center'>
         <Typography fontSize={25} fontWeight='light'>
           {dateString}
         </Typography>
       </Grid>
 
       <Grid item>
+        <IconButton color='primary' aria-label='upload pictures' component='label' size='large' disabled={isSaving}>
+          <input type='file' multiple accept='image/*' hidden onChange={onFileInputChange} />
+          <AddPhotoAlternateRounded />
+        </IconButton>
+      </Grid>
+
+      <Grid item>
         <Button size='large' variant='contained' endIcon={<SaveOutlined />} onClick={onClickSaveNote} disabled={isSaving}>
           Save
         </Button>
+      </Grid>
+
+      <Grid item>
+        <IconButton color='error' aria-label='delete note for ever' size='large' disabled={isSaving} onClick={onClickDeleteNote}>
+          <DeleteForeverTwoTone />
+        </IconButton>
       </Grid>
 
       <Grid container sx={{ mb: 3 }}>
@@ -80,7 +95,7 @@ export const NoteView = () => {
         ></TextField>
       </Grid>
 
-      <ImageGallery />
+      <ImageGallery images={activeNote.imagesUrls} />
     </Grid>
   );
 };

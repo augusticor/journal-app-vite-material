@@ -1,5 +1,6 @@
-import { getAllUserNotes, saveNote, setNewNote } from '../../firebase/provides';
-import { addNewEmptyNote, savingNewNote, setActiveNote, setNotes, setSaving, updateNote } from './journalSlice';
+import { deleteNote, getAllUserNotes, saveNote, setNewNote } from '../../firebase/provides';
+import { imageUpload } from '../../helpers/cloudinaryFileUpload';
+import { addNewEmptyNote, savingNewNote, setActiveNote, setNotes, setSaving, updateNote, setImagesUrls, deleteNoteByID } from './journalSlice';
 
 export const startCreatingNote = () => {
   return async (dispatch, getState) => {
@@ -45,5 +46,38 @@ export const startSavingNote = () => {
 
     // Update note on redux store for UI
     dispatch(updateNote(activeNote));
+  };
+};
+
+export const startDeletingNote = () => {
+  return async (dispatch, getState) => {
+    dispatch(setSaving());
+
+    const { uid } = getState().auth;
+    const { activeNote } = getState().journal;
+
+    await deleteNote(`${uid}/journal/notes/${activeNote.id}`);
+
+    // Update redux notes store for delete visually the note
+    dispatch(deleteNoteByID({ noteID: activeNote.id }));
+  };
+};
+
+// ----------------- Cloudinary --------------------
+
+export const startUploadingImagesToCloudinary = (files = []) => {
+  return async (dispatch) => {
+    dispatch(setSaving());
+
+    // Code to "launch" all promises or al image uploads at the same time instead of one to one
+    const fileUploadPromises = [];
+    for (const file of files) {
+      fileUploadPromises.push(imageUpload(file));
+    }
+
+    const imagesUrls = await Promise.all(fileUploadPromises);
+    // console.log(photoUrls);
+    // Set the new images links to redux store
+    dispatch(setImagesUrls(imagesUrls));
   };
 };

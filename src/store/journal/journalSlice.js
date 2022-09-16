@@ -50,7 +50,12 @@ export const journalSlice = createSlice({
     },
 
     deleteNoteByID: (state, { payload }) => {
-      // Delete note from array
+      // Delete from active note in store because is the active one
+      state.activeNote = null;
+      // Delete from array of notes
+      state.notes = state.notes.filter((note) => note.id !== payload.noteID);
+      state.finishedMessage = 'Note deleted';
+      state.isSaving = false;
     },
 
     // This action is called when app is creating a new note on firebase
@@ -63,7 +68,17 @@ export const journalSlice = createSlice({
       state.isSaving = true;
       state.finishedMessage = '';
     },
+
+    setImagesUrls: (state, { payload }) => {
+      state.activeNote.imagesUrls = [...state.activeNote.imagesUrls, ...payload];
+      state.isSaving = false;
+    },
+
+    clearNotesLogout: (state) => {
+      return Object.assign(state, initialState);
+    },
   },
 });
 
-export const { addNewEmptyNote, setActiveNote, setNotes, setSaving, updateNote, deleteNoteByID, savingNewNote } = journalSlice.actions;
+export const { addNewEmptyNote, clearNotesLogout, deleteNoteByID, savingNewNote, setActiveNote, setImagesUrls, setNotes, setSaving, updateNote } =
+  journalSlice.actions;

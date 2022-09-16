@@ -8,7 +8,7 @@ import {
   updateProfile,
 } from 'firebase/auth';
 
-import { collection, doc, getDocs, setDoc, updateDoc } from 'firebase/firestore/lite';
+import { collection, deleteDoc, doc, getDocs, setDoc, updateDoc } from 'firebase/firestore/lite';
 
 // -----------------------------------------------------------------
 // Auth
@@ -141,6 +141,15 @@ export const saveNote = async (updatedNote, path) => {
   try {
     const noteReference = doc(firestoreDB, path);
     await updateDoc(noteReference, updatedNote);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deleteNote = async (path) => {
+  try {
+    const noteReference = doc(firestoreDB, path);
+    await deleteDoc(noteReference);
   } catch (error) {
     console.log(error);
   }
