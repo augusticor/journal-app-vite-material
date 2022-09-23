@@ -70,6 +70,8 @@ export const journalSlice = createSlice({
     },
 
     setImagesUrls: (state, { payload }) => {
+      if (!state.activeNote.imagesUrls) state.activeNote.imagesUrls = [];
+
       state.activeNote.imagesUrls = [...state.activeNote.imagesUrls, ...payload];
       state.isSaving = false;
     },

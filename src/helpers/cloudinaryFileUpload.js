@@ -1,7 +1,12 @@
-export const imageUpload = async (file) => {
-  if (!file) throw new Error('No file added');
+import { getEnvironments } from './getEnvironments';
 
-  const cloudinaryUploadUrl = import.meta.env.VITE_CLOUDINARYUPLOADURL;
+const { VITE_CLOUDINARYUPLOADURL } = getEnvironments();
+
+export const imageUpload = async (file) => {
+  // if (!file) throw new Error('No file added');
+  if (!file) return null;
+
+  const cloudinaryUploadUrl = VITE_CLOUDINARYUPLOADURL;
 
   const formData = new FormData();
 
@@ -15,6 +20,9 @@ export const imageUpload = async (file) => {
     };
 
     const response = await fetch(cloudinaryUploadUrl, fetchConfig);
+
+    if (!response.ok) throw new Error('Could not upload image');
+
     // console.log(response);
     const cloudResponse = await response.json();
     // console.log(cloudResponse);
@@ -22,6 +30,7 @@ export const imageUpload = async (file) => {
     return cloudResponse.secure_url;
   } catch (error) {
     console.log(error);
-    throw new Error(error.message);
+    // throw new Error(error.message);
+    return null;
   }
 };
