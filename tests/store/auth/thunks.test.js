@@ -1,6 +1,13 @@
-import { registerUserWithEmailAndPassword, signInWithGoogle } from '../../../src/firebase/provides';
+import { firebaseSignOut, loginWithEmailAndPassword, registerUserWithEmailAndPassword, signInWithGoogle } from '../../../src/firebase/provides';
 import { checkingCredentials, login, logout } from '../../../src/store/auth/authSlice';
-import { checkingAuthentication, startGoogleSignIn, startRegisterUserWithEmailAndPassword } from '../../../src/store/auth/thunks';
+import {
+  checkingAuthentication,
+  startGoogleSignIn,
+  startLoginWithEmailAndPassword,
+  startLogout,
+  startRegisterUserWithEmailAndPassword,
+} from '../../../src/store/auth/thunks';
+import { clearNotesLogout } from '../../../src/store/journal/journalSlice';
 import { demoUser } from '../../fixtures/authFixtures';
 
 // Mock of all Firebase providers, all exports from the file in the path
@@ -61,14 +68,61 @@ describe('Tests on auth thunks', () => {
     const succesfulResponse = { ok: true, ...demoUser };
     await registerUserWithEmailAndPassword.mockResolvedValue(succesfulResponse);
 
-    const demoRegisterUser = { displayName: expect.any(String), email: expect.any(String), password: expect.any(String) };
-    const returnedDispatcherFunctionByThunk = await startRegisterUserWithEmailAndPassword(demoRegisterUser);
-    // Execute returned function
-    returnedDispatcherFunctionByThunk(dispatch);
+    const demoRegisterUser = { username: expect.any(String), email: expect.any(String), password: expect.any(String) };
+    await startRegisterUserWithEmailAndPassword(demoRegisterUser)(dispatch);
 
     expect(dispatch).toHaveBeenCalled();
     expect(dispatch).toHaveBeenCalledWith(checkingCredentials());
-    // expect(dispatch).toHaveBeenCalledWith(login(succesfulResponse));
+    expect(dispatch).toHaveBeenCalledWith(login(succesfulResponse));
+    expect(dispatch).toHaveBeenCalledTimes(2);
+  });
+
+  test('Should return error startRegisterUserWithEmailAndPassword, call checkingCredentials and logout', async () => {
+    const errorResponse = { ok: false, code: expect.any(String), message: 'Register email and pass error message' };
+    await registerUserWithEmailAndPassword.mockResolvedValue(errorResponse);
+
+    const demoRegisterUser = { username: expect.any(String), email: expect.any(String), password: expect.any(String) };
+    await startRegisterUserWithEmailAndPassword(demoRegisterUser)(dispatch);
+
+    expect(dispatch).toHaveBeenCalled();
+    expect(dispatch).toHaveBeenCalledWith(checkingCredentials());
+    expect(dispatch).toHaveBeenNthCalledWith(2, logout(errorResponse.message));
+    expect(dispatch).toHaveBeenCalledTimes(2);
+  });
+
+  test('Should succesfully startLoginWithEmailAndPassword', async () => {
+    const successfulResponse = { ok: true, ...demoUser };
+    const loginData = { email: expect.any(String), password: expect.any(String) };
+
+    // Mocked function
+    await loginWithEmailAndPassword.mockResolvedValue(successfulResponse);
+
+    await startLoginWithEmailAndPassword(loginData)(dispatch);
+
+    expect(dispatch).toHaveBeenCalledWith(checkingCredentials());
+    expect(dispatch).toHaveBeenCalledWith(login(demoUser));
+    expect(dispatch).toHaveBeenCalledTimes(2);
+  });
+
+  test('Should startLoginWithEmailAndPassword and return error, call checkingCredentials and logout', async () => {
+    const errorResponse = { ok: false, code: expect.any(String), message: 'login with email and password error message' };
+    const loginData = { email: expect.any(String), password: expect.any(String) };
+
+    await loginWithEmailAndPassword.mockResolvedValue(errorResponse);
+
+    await startLoginWithEmailAndPassword(loginData)(dispatch);
+
+    expect(dispatch).toHaveBeenCalledWith(checkingCredentials());
+    expect(dispatch).toHaveBeenCalledWith(logout(errorResponse.message));
+    expect(dispatch).toHaveBeenCalledTimes(2);
+  });
+
+  test('startLogout should call firebaseSignOut, clearNotes and logout', async () => {
+    await startLogout()(dispatch);
+
+    expect(firebaseSignOut).toHaveBeenCalledTimes(1);
+    expect(dispatch).toHaveBeenCalledWith(clearNotesLogout());
+    expect(dispatch).toHaveBeenCalledWith(logout());
     expect(dispatch).toHaveBeenCalledTimes(2);
   });
 });
