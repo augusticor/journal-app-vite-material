@@ -14,6 +14,7 @@ import { demoUser } from '../../fixtures/authFixtures';
 jest.mock('../../../src/firebase/provides');
 
 describe('Tests on auth thunks', () => {
+  // Mock the redux dispatch function
   const dispatch = jest.fn();
 
   beforeEach(() => {
@@ -39,7 +40,7 @@ describe('Tests on auth thunks', () => {
     await signInWithGoogle.mockResolvedValue(successfulResponse);
 
     // thunk
-    // ()() execute the returned function, same as line 17-18
+    // ()() execute the returned function, same as line 24-25
     await startGoogleSignIn()(dispatch);
 
     expect(dispatch).toHaveBeenCalled();
@@ -97,7 +98,8 @@ describe('Tests on auth thunks', () => {
     // Mocked function
     await loginWithEmailAndPassword.mockResolvedValue(successfulResponse);
 
-    await startLoginWithEmailAndPassword(loginData)(dispatch);
+    const returnedFunctionByThunk = startLoginWithEmailAndPassword(loginData);
+    await returnedFunctionByThunk(dispatch);
 
     expect(dispatch).toHaveBeenCalledWith(checkingCredentials());
     expect(dispatch).toHaveBeenCalledWith(login(demoUser));
@@ -110,7 +112,8 @@ describe('Tests on auth thunks', () => {
 
     await loginWithEmailAndPassword.mockResolvedValue(errorResponse);
 
-    await startLoginWithEmailAndPassword(loginData)(dispatch);
+    const returnedAsyncFunctionByThunk = startLoginWithEmailAndPassword(loginData);
+    await returnedAsyncFunctionByThunk(dispatch);
 
     expect(dispatch).toHaveBeenCalledWith(checkingCredentials());
     expect(dispatch).toHaveBeenCalledWith(logout(errorResponse.message));
