@@ -154,3 +154,15 @@ export const deleteNote = async (path) => {
     console.log(error);
   }
 };
+
+export const deleteAllNotesFromAnUser = async (path) => {
+  const querySnapshot = await getDocs(collection(firestoreDB, path));
+
+  const deletePromises = [];
+
+  querySnapshot.forEach((doc) => {
+    deletePromises.push(deleteDoc(doc.ref));
+  });
+
+  await Promise.all(deletePromises);
+};

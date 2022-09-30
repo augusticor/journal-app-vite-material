@@ -1,4 +1,4 @@
-const imageURLTest = 'https://res.cloudinary.com/dg2nreez0/image/upload/v1664315699/journal-app-vite/nelb6gm77lmwujeeksir.png';
+export const imageURLTest = 'https://res.cloudinary.com/dg2nreez0/image/upload/v1664315699/journal-app-vite/nelb6gm77lmwujeeksir.png';
 
 export const initialState = {
   isSaving: false,
@@ -48,9 +48,30 @@ export const testNotes = new Array(
   }
 );
 
+export const stateWithNotes = {
+  isSaving: false,
+  finishedMessage: '',
+  notes: testNotes,
+  activeNote: null,
+};
+
 export const updatedNoteState = {
   isSaving: false,
   finishedMessage: 'Note sucesfully saved',
   notes: Object.assign([], testNotes, { 2: activeNote }),
   activeNote: null,
+};
+
+export const deletedNoteState = {
+  isSaving: false,
+  finishedMessage: 'Note deleted',
+  notes: [...testNotes.slice(0, 2), ...testNotes.slice(-1)],
+  activeNote: null,
+};
+
+export const fullState = {
+  isSaving: true,
+  finishedMessage: 'Finished Message',
+  notes: testNotes,
+  activeNote: activeNote,
 };

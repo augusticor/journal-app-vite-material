@@ -1,5 +1,27 @@
-import { addNewEmptyNote, journalSlice, setActiveNote, setNotes, updateNote } from '../../../src/store/journal/journalSlice';
-import { activeNote, emptyNote, initialState, testNotes, updatedNoteState } from '../../fixtures/journalFixtures';
+import {
+  addNewEmptyNote,
+  clearNotesLogout,
+  deleteNoteByID,
+  journalSlice,
+  savingNewNote,
+  setActiveNote,
+  setImagesUrls,
+  setNotes,
+  setSaving,
+  updateNote,
+} from '../../../src/store/journal/journalSlice';
+
+import {
+  activeNote,
+  deletedNoteState,
+  emptyNote,
+  fullState,
+  imageURLTest,
+  initialState,
+  stateWithNotes,
+  testNotes,
+  updatedNoteState,
+} from '../../fixtures/journalFixtures';
 
 describe('Tests on journal slice', () => {
   beforeEach(() => jest.clearAllMocks());
@@ -33,10 +55,43 @@ describe('Tests on journal slice', () => {
   });
 
   test('Should update note', () => {
-    const state = journalSlice.reducer(initialState, updateNote(activeNote));
+    const state = journalSlice.reducer(stateWithNotes, updateNote(activeNote));
 
-    // TODO CREATE FULL STAtE
-    console.log(state);
-    // expect(state).toEqual(updatedNoteState);
+    expect(state).toEqual(updatedNoteState);
+    expect(state.notes).not.toEqual(testNotes);
+    expect(state.notes).toHaveLength(testNotes.length);
+  });
+
+  test('Should delete note by ID', () => {
+    const state = journalSlice.reducer(stateWithNotes, deleteNoteByID({ noteID: activeNote.id }));
+
+    expect(state).toEqual(deletedNoteState);
+    expect(state.notes).not.toEqual(testNotes);
+    expect(state.notes).toHaveLength(testNotes.length - 1);
+    expect(state.notes.length).toBeLessThan(testNotes.length);
+  });
+
+  test('Should call savingNewNote and setSaving', () => {
+    const state = journalSlice.reducer(initialState, savingNewNote());
+    expect(state.isSaving).toBe(true);
+
+    const secondState = journalSlice.reducer(updatedNoteState, setSaving());
+    expect(secondState.isSaving).toBe(true);
+    expect(secondState.finishedMessage).toBe('');
+  });
+
+  test('Should set images array urls', () => {
+    const state = journalSlice.reducer(fullState, setImagesUrls([imageURLTest, imageURLTest]));
+
+    expect(state.isSaving).toBe(false);
+
+    expect(state.activeNote.imagesUrls).toHaveLength(3);
+    expect(state.activeNote.imagesUrls).toEqual[(imageURLTest, imageURLTest, imageURLTest)];
+    expect(state.activeNote.imagesUrls.length).toBeGreaterThan(fullState.activeNote.imagesUrls.length);
+  });
+
+  test('Should clear notes on logout', () => {
+    const state = journalSlice.reducer(fullState, clearNotesLogout());
+    expect(state).toStrictEqual(initialState);
   });
 });
