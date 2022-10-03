@@ -51,6 +51,7 @@ describe('Tests on journal slice', () => {
     const state = journalSlice.reducer(initialState, setNotes({ notes: testNotes }));
 
     expect(state.notes).toHaveLength(testNotes.length);
+    expect(state.notes.length).toBeGreaterThan(1);
     expect(state.notes).toEqual(testNotes);
   });
 

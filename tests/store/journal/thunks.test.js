@@ -1,6 +1,6 @@
 import { deleteAllNotesFromAnUser } from '../../../src/firebase/provides';
-import { addNewEmptyNote, savingNewNote, setActiveNote } from '../../../src/store/journal/journalSlice';
-import { startCreatingNote } from '../../../src/store/journal/thunks';
+import { addNewEmptyNote, savingNewNote, setActiveNote, setNotes } from '../../../src/store/journal/journalSlice';
+import { startCreatingNote, startLoadingNotes } from '../../../src/store/journal/thunks';
 import { emptyNote } from '../../fixtures/journalFixtures';
 
 describe('Tests on Journal thunks', () => {
@@ -27,5 +27,17 @@ describe('Tests on Journal thunks', () => {
 
     // Delete all notes after test
     await deleteAllNotesFromAnUser(`${testUID}/journal/notes`);
+  });
+
+  test('Should start loading notes', async () => {
+    // Real user UID from Firebase
+    const testUID = '3d6558rf8AS46Fd5D46';
+
+    getState.mockReturnValue({ auth: { uid: testUID } });
+
+    await startLoadingNotes()(dispatch, getState);
+
+    expect(dispatch).toHaveBeenCalledWith(setNotes(expect.any(Object)));
+    expect(dispatch).toHaveBeenCalledTimes(1);
   });
 });
