@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: npm install --include=dev
       - name: Test project
-        run: npm run test
+        run: npm run ghworkflowtest
         env:
           # Cloudinary environment variables:
           VITE_CLOUDINARYUPLOADURL: ${{ secrets.VITE_CLOUDINARYUPLOADURL }}
