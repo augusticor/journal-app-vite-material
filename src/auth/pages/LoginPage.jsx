@@ -2,12 +2,12 @@ import { useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 
-import { Google, VisibilityOff, Visibility } from '@mui/icons-material';
+import { GitHub, Google, VisibilityOff, Visibility } from '@mui/icons-material';
 import { Alert, Button, Grid, IconButton, InputAdornment, Link, TextField, Typography } from '@mui/material';
 import AuthLayout from '../layout/AuthLayout';
 
 import { useForm } from '../../hooks/useForm';
-import { startGoogleSignIn, startLoginWithEmailAndPassword } from '../../store/auth/thunks';
+import { startGitHubSignIn, startGoogleSignIn, startLoginWithEmailAndPassword } from '../../store/auth/thunks';
 
 const formInitialState = { email: '', password: '' };
 
@@ -30,6 +30,10 @@ const LoginPage = () => {
   const onGoogleSignIn = () => {
     // console.log('On google sign IN');
     dispatch(startGoogleSignIn());
+  };
+
+  const onGitHubSignIn = () => {
+    dispatch(startGitHubSignIn());
   };
 
   return (
@@ -78,7 +82,7 @@ const LoginPage = () => {
               <Alert severity='error'>{errorMessage}</Alert>
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={12}>
               <Button type='submit' variant='outlined' fullWidth disabled={isAuthenticating}>
                 Login
               </Button>
@@ -94,6 +98,19 @@ const LoginPage = () => {
                 aria-label='google-btn'
               >
                 <Typography>Sign in with Google</Typography>
+              </Button>
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <Button
+                variant='contained'
+                fullWidth
+                startIcon={<GitHub />}
+                onClick={onGitHubSignIn}
+                disabled={isAuthenticating}
+                aria-label='github-btn'
+              >
+                <Typography>Sign in with GitHub</Typography>
               </Button>
             </Grid>
           </Grid>

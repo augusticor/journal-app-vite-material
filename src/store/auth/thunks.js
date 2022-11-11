@@ -1,4 +1,11 @@
-import { firebaseSignOut, loginWithEmailAndPassword, registerUserWithEmailAndPassword, signInWithGoogle } from '../../firebase/provides';
+import {
+  firebaseSignOut,
+  loginWithEmailAndPassword,
+  registerUserWithEmailAndPassword,
+  signInWithGitHub,
+  signInWithGoogle,
+} from '../../firebase/provides';
+
 import { checkingCredentials, login, logout } from './authSlice';
 import { clearNotesLogout } from '../journal/journalSlice';
 
@@ -16,6 +23,19 @@ export const startGoogleSignIn = () => {
     const result = await signInWithGoogle();
 
     // console.log(result);
+
+    if (!result.ok) return dispatch(logout(result.message));
+
+    delete result.ok;
+    dispatch(login(result));
+  };
+};
+
+export const startGitHubSignIn = () => {
+  return async (dispatch) => {
+    dispatch(checkingCredentials());
+
+    const result = await signInWithGitHub();
 
     if (!result.ok) return dispatch(logout(result.message));
 

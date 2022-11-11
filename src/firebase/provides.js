@@ -1,6 +1,7 @@
 import { firebaseAuth, firestoreDB } from './config';
 import {
   createUserWithEmailAndPassword,
+  GithubAuthProvider,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -14,6 +15,7 @@ import { collection, deleteDoc, doc, getDocs, setDoc, updateDoc } from 'firebase
 // Auth
 
 const googleProvider = new GoogleAuthProvider();
+const githubProvider = new GithubAuthProvider();
 
 export const signInWithGoogle = async () => {
   try {
@@ -33,6 +35,27 @@ export const signInWithGoogle = async () => {
   } catch (error) {
     const { code, message } = error;
 
+    return { ok: false, code, message };
+  }
+};
+
+export const signInWithGitHub = async () => {
+  try {
+    const result = await signInWithPopup(firebaseAuth, githubProvider);
+
+    const user = result.user;
+
+    const { uid, displayName, email, photoURL } = user;
+
+    return {
+      ok: true,
+      uid,
+      displayName,
+      email,
+      photoURL,
+    };
+  } catch (error) {
+    const { code, message } = error;
     return { ok: false, code, message };
   }
 };
