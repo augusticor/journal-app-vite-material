@@ -1,7 +1,14 @@
-import { firebaseSignOut, loginWithEmailAndPassword, registerUserWithEmailAndPassword, signInWithGoogle } from '../../../src/firebase/provides';
+import {
+  firebaseSignOut,
+  loginWithEmailAndPassword,
+  registerUserWithEmailAndPassword,
+  signInWithGitHub,
+  signInWithGoogle,
+} from '../../../src/firebase/provides';
 import { checkingCredentials, login, logout } from '../../../src/store/auth/authSlice';
 import {
   checkingAuthentication,
+  startGitHubSignIn,
   startGoogleSignIn,
   startLoginWithEmailAndPassword,
   startLogout,
@@ -57,6 +64,33 @@ describe('Tests on auth thunks', () => {
 
     // execute thunk
     await startGoogleSignIn()(dispatch);
+
+    expect(dispatch).toHaveBeenCalled();
+    expect(dispatch).toHaveBeenCalledWith(checkingCredentials());
+    expect(dispatch).toHaveBeenCalledWith(logout(errorResponse.message));
+    expect(dispatch).toHaveBeenCalledTimes(2);
+  });
+
+  test('Should start successful github signin, call checking credentials and login', async () => {
+    const successfulResponse = { ok: true, ...demoUser };
+    await signInWithGitHub.mockResolvedValue(successfulResponse);
+
+    await startGitHubSignIn()(dispatch);
+
+    expect(dispatch).toHaveBeenCalled();
+    expect(dispatch).toHaveBeenCalledWith(checkingCredentials());
+    expect(dispatch).toHaveBeenCalledWith(login(successfulResponse));
+    expect(dispatch).toHaveBeenNthCalledWith(2, login(successfulResponse));
+    expect(dispatch).toHaveBeenCalledTimes(2);
+  });
+
+  test('Should start githubSignIn and return error, call only logout with error message', async () => {
+    const errorResponse = { ok: false, code: expect.any(String), message: 'Test error message' };
+    // Mocked function :
+    await signInWithGitHub.mockResolvedValue(errorResponse);
+
+    // execute thunk
+    await startGitHubSignIn()(dispatch);
 
     expect(dispatch).toHaveBeenCalled();
     expect(dispatch).toHaveBeenCalledWith(checkingCredentials());
