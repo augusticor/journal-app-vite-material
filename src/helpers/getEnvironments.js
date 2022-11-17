@@ -1,9 +1,12 @@
 export const getEnvironments = () => {
   // Load the environment variables
-  import.meta.env;
+  const object = import.meta.env;
+
+  console.log(object);
 
   //   Return them
   return {
-    ...import.meta.env,
+    // ...import.meta.env,
+    ...object,
   };
 };
