@@ -29,7 +29,7 @@ Here is how the web app looks like :
 
 ---
 
-Check the deployed site at [Journal App Vite Material](https://reactjs.org/).
+Check the deployed site at [Journal App Vite Material](https://journalappa.vercel.app/auth/login).
 
 ---
 
@@ -67,7 +67,7 @@ Note: If you already have created and configured the Firebase App and the Cloudi
 
 ### Deployment
 
-The web app is deployed using *Vercel*, check the deployment at [Journal App Vite Material](https://reactjs.org/).
+The web app is deployed using *Vercel*, check the deployment at [Journal App Vite Material](https://journalappa.vercel.app/auth/login).
 
 ## Dependencies
 
